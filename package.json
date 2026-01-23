@@ -12,7 +12,16 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "@google/genai": "1.38.0",
-    "lucide-react": "0.475.0"
+    "lucide-react": "0.475.0",
+    "./App.tsx": "latest",
+    "./components/Navbar.tsx": "latest",
+    "./components/Hero.tsx": "latest",
+    "./components/SentimentTracker.tsx": "latest",
+    "./components/NewsGrid.tsx": "latest",
+    "./components/MapSection.tsx": "latest",
+    "./components/Footer.tsx": "latest",
+    "./services/geminiService.ts": "latest",
+    "./types.ts": "latest"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
