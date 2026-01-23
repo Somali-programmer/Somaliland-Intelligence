@@ -9,7 +9,7 @@ import Footer from './components/Footer.tsx';
 
 const App: React.FC = () => {
   useEffect(() => {
-    console.log(">> APP_MODULE: Component Tree Active - Hiding Loader");
+    console.log(">> APP_MODULE: Component Tree Active - Clearing Loader Overlay");
     
     const hideLoader = () => {
       const loader = document.getElementById('loading-screen');
@@ -18,27 +18,32 @@ const App: React.FC = () => {
         loader.style.opacity = '0';
         loader.style.pointerEvents = 'none';
         
+        // Remove from DOM to prevent any interference
         setTimeout(() => {
           if (loader.parentNode) {
             loader.parentNode.removeChild(loader);
-            console.log(">> APP_MODULE: Loader removed from DOM");
+            console.log(">> APP_MODULE: Loader successfully removed from DOM.");
           }
         }, 600);
       }
     };
 
-    // Attempt immediately
+    // Execute immediately on mount
     hideLoader();
     
-    // Also try slightly later just in case of DOM updates
-    const timer = setTimeout(hideLoader, 100);
+    // Safety fallback for slow browser rendering
+    const timer = setTimeout(hideLoader, 500);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FBFBFA] dark:bg-[#020617] transition-colors duration-300">
+    <div 
+      id="app-container" 
+      className="min-h-screen flex flex-col bg-[#FBFBFA] dark:bg-[#020617] text-[#1A1F2E] dark:text-[#F1F5F9] transition-colors duration-300"
+      style={{ display: 'flex', minHeight: '100vh', width: '100%' }}
+    >
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow pt-16">
         <Hero />
         <SentimentTracker />
         <NewsGrid />

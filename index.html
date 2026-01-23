@@ -49,7 +49,7 @@
         background: #020617;
         color: #ef4444;
         padding: 40px;
-        z-index: 10001;
+        z-index: 100001;
         font-family: monospace;
       }
       @keyframes spin { to { transform: rotate(360deg); } }
@@ -112,30 +112,40 @@
     <script type="text/tsx" src="./index.tsx"></script>
 
     <script>
+      // Fallback timer for platform handshake
       setTimeout(() => {
         const loading = document.getElementById('loading-screen');
         if (loading && !loading.classList.contains('hidden')) {
           const statusUi = document.getElementById('status-ui');
           if (statusUi) {
-            statusUi.innerText = '[ !! ] Latency Detected - Syncing...';
+            statusUi.innerText = '[ !! ] Slow Initialization - Please Wait...';
             statusUi.style.color = '#fbbf24';
           }
-          // Emergency clear button if it really hangs
+          
           if (!document.getElementById('emergency-clear')) {
             const btn = document.createElement('button');
             btn.id = 'emergency-clear';
             btn.innerText = 'Bypass Loader';
             btn.style.marginTop = '20px';
-            btn.style.padding = '8px 16px';
+            btn.style.padding = '10px 20px';
             btn.style.border = '1px solid #10B981';
+            btn.style.background = 'rgba(16, 185, 129, 0.1)';
             btn.style.color = '#10B981';
-            btn.style.fontSize = '10px';
+            btn.style.fontSize = '12px';
+            btn.style.fontWeight = 'bold';
+            btn.style.borderRadius = '6px';
             btn.style.cursor = 'pointer';
-            btn.onclick = () => loading.classList.add('hidden');
+            btn.onclick = () => {
+              console.log(">> MANUAL BYPASS TRIGGERED");
+              loading.classList.add('hidden');
+              // Ensure root is visible
+              const root = document.getElementById('root');
+              if (root) root.style.display = 'block';
+            };
             loading.appendChild(btn);
           }
         }
-      }, 10000);
+      }, 12000);
     </script>
   </body>
 </html>

@@ -1,9 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-// We instantiate inside functions to ensure the latest process.env.API_KEY is used
-// as per the requirement for environments that use openSelectKey().
-
 export const getGeopoliticalSummary = async (): Promise<string[]> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -34,10 +31,6 @@ export const getGeopoliticalSummary = async (): Promise<string[]> => {
     ];
   } catch (error: any) {
     console.error("Error fetching Gemini summary:", error);
-    if (error.message?.includes("Requested entity was not found")) {
-      // This usually means the API key project is invalid/unselected
-      if (window.aistudio) window.aistudio.openSelectKey();
-    }
     return [
       "Strategic diplomatic initiatives are intensifying regional integration efforts.",
       "Berbera Corridor infrastructure reaching critical operational capacity.",
@@ -54,18 +47,23 @@ export interface LocationIntel {
 export const getLocationIntel = async (locationName: string): Promise<LocationIntel> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    // Try to get user coordinates for better grounding context
     let latLng = undefined;
+    
+    // Quick-fail geolocation to avoid blocking UI
     try {
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 3000 });
+        if (!navigator.geolocation) return reject(new Error("No Geolocation Support"));
+        navigator.geolocation.getCurrentPosition(resolve, reject, { 
+          timeout: 2000,
+          enableHighAccuracy: false
+        });
       });
       latLng = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       };
     } catch (e) {
-      console.warn("Geolocation not available/timed out, proceeding with general grounding.");
+      console.warn("Geolocation skipped or timed out, using general grounding.");
     }
 
     const response = await ai.models.generateContent({
@@ -94,9 +92,6 @@ export const getLocationIntel = async (locationName: string): Promise<LocationIn
     return { text, links };
   } catch (error: any) {
     console.error("Error fetching Maps Intel:", error);
-    if (error.message?.includes("Requested entity was not found")) {
-       if (window.aistudio) window.aistudio.openSelectKey();
-    }
     return {
       text: `Tactical overview for ${locationName} is undergoing maintenance. Primary hubs include administrative centers and logistics corridors vital for the 2026 outlook.`,
       links: []
