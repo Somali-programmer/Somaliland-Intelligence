@@ -49,7 +49,7 @@
         background: #020617;
         color: #ef4444;
         padding: 40px;
-        z-index: 100001;
+        z-index: 100002;
         font-family: monospace;
       }
       @keyframes spin { to { transform: rotate(360deg); } }
@@ -59,14 +59,14 @@
       #loading-screen {
         position: fixed !important;
         inset: 0 !important;
-        z-index: 99999 !important;
+        z-index: 100000 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         background: #020617 !important;
         color: white !important;
-        transition: opacity 0.5s ease-out, visibility 0.5s !important;
+        transition: opacity 0.4s ease-out;
       }
       #loading-screen.hidden {
         opacity: 0 !important;
@@ -98,7 +98,7 @@
       <div style="text-align: center; font-family: monospace;">
         <h1 style="color: #10B981; font-size: 14px; font-weight: bold; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 15px;">Initializing Intelligence Platform</h1>
         
-        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <div id="status-container" style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
           <div style="font-size: 10px; color: #4ade80;">[ OK ] Uplink established</div>
           <div style="font-size: 10px; color: #4ade80;">[ OK ] Core modules loaded</div>
           <div id="status-ui" style="font-size: 10px; color: #64748b;" class="animate-pulse-custom">[ .. ] Synchronizing UI Engine</div>
@@ -112,13 +112,30 @@
     <script type="text/tsx" src="./index.tsx"></script>
 
     <script>
+      // Global error listener for module loading
+      window.addEventListener('error', (e) => {
+        if (e.target.tagName === 'SCRIPT' || e.message?.includes('import')) {
+          console.error('Module/Script loading error:', e);
+          const overlay = document.getElementById('error-overlay');
+          if (overlay) {
+            overlay.style.display = 'block';
+            overlay.innerHTML = `<div style="padding: 20px; border: 1px solid #ef4444; border-radius: 8px; background: #000;">
+              <h2 style="color: #ef4444; margin-top: 0;">Script/Module Error</h2>
+              <p style="color: #fff; font-size: 12px;">Failed to load critical component. This usually indicates a connectivity issue or a version mismatch in the import map.</p>
+              <pre style="color: #888; font-size: 11px; margin-top: 10px; white-space: pre-wrap;">${e.message || 'Check browser console for network failures'}</pre>
+              <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #10B981; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
+            </div>`;
+          }
+        }
+      }, true);
+
       // Fallback timer for platform handshake
       setTimeout(() => {
         const loading = document.getElementById('loading-screen');
         if (loading && !loading.classList.contains('hidden')) {
           const statusUi = document.getElementById('status-ui');
           if (statusUi) {
-            statusUi.innerText = '[ !! ] Slow Initialization - Please Wait...';
+            statusUi.innerText = '[ !! ] Delayed Initialization - Retrying Handshake...';
             statusUi.style.color = '#fbbf24';
           }
           
@@ -126,26 +143,31 @@
             const btn = document.createElement('button');
             btn.id = 'emergency-clear';
             btn.innerText = 'Bypass Loader';
-            btn.style.marginTop = '20px';
-            btn.style.padding = '10px 20px';
+            btn.style.marginTop = '24px';
+            btn.style.padding = '10px 24px';
             btn.style.border = '1px solid #10B981';
             btn.style.background = 'rgba(16, 185, 129, 0.1)';
             btn.style.color = '#10B981';
-            btn.style.fontSize = '12px';
+            btn.style.fontSize = '11px';
             btn.style.fontWeight = 'bold';
-            btn.style.borderRadius = '6px';
+            btn.style.borderRadius = '8px';
             btn.style.cursor = 'pointer';
+            btn.style.letterSpacing = '0.1em';
             btn.onclick = () => {
-              console.log(">> MANUAL BYPASS TRIGGERED");
+              console.warn(">> MANUAL BYPASS TRIGGERED - INVESTIGATING HANG");
               loading.classList.add('hidden');
-              // Ensure root is visible
+              // Force visibility of root in case of CSS conflicts
               const root = document.getElementById('root');
-              if (root) root.style.display = 'block';
+              if (root) {
+                root.style.opacity = '1';
+                root.style.visibility = 'visible';
+                root.style.display = 'block';
+              }
             };
             loading.appendChild(btn);
           }
         }
-      }, 12000);
+      }, 8000);
     </script>
   </body>
 </html>
