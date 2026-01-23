@@ -9,8 +9,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      // Shim process.env for environments like GitHub Pages where it isn't injected
-      window.process = window.process || { env: { API_KEY: "" } };
+      // Process shim for browser environments
+      window.process = { env: { API_KEY: "" } };
       
       tailwind.config = {
         darkMode: 'class',
@@ -30,29 +30,17 @@
       :root {
         --bg-color: #FBFBFA; 
         --text-color: #1A1F2E;
-        --glass-bg: rgba(251, 251, 250, 0.85);
-        --glass-border: rgba(0, 0, 0, 0.06);
       }
       .dark {
         --bg-color: #020617;
         --text-color: #F1F5F9;
-        --glass-bg: rgba(15, 23, 42, 0.8);
-        --glass-border: rgba(255, 255, 255, 0.08);
       }
       body {
         font-family: 'Inter', sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
-        transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         margin: 0;
         -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      .glass {
-        background: var(--glass-bg);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid var(--glass-border);
       }
       #error-overlay {
         display: none;
@@ -63,13 +51,25 @@
         height: 100%;
         background: rgba(0,0,0,0.9);
         color: #ff4444;
-        padding: 20px;
+        padding: 40px;
         z-index: 9999;
         font-family: monospace;
+        overflow-y: auto;
       }
+      .glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      .dark .glass {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 
-    <!-- Import Map: Defines where the browser finds code -->
+    <!-- Import Map: Consolidate versions and map components correctly -->
     <script type="importmap">
 {
   "imports": {
@@ -78,59 +78,47 @@
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "@google/genai": "https://esm.sh/@google/genai@1.38.0",
     "lucide-react": "https://esm.sh/lucide-react@0.475.0",
-    "./App": "./App.tsx",
-    "./components/Navbar": "./components/Navbar.tsx",
-    "./components/Hero": "./components/Hero.tsx",
-    "./components/SentimentTracker": "./components/SentimentTracker.tsx",
-    "./components/NewsGrid": "./components/NewsGrid.tsx",
-    "./components/MapSection": "./components/MapSection.tsx",
-    "./components/Footer": "./components/Footer.tsx",
-    "./services/geminiService": "./services/geminiService.ts",
-    "./types": "./types.ts",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 
-    <!-- Error Handling Script -->
     <script>
-      window.onerror = function(msg, url, lineNo, columnNo, error) {
+      window.onerror = function(msg, url, line, col, error) {
+        console.error("Global Error:", msg, error);
         const overlay = document.getElementById('error-overlay');
-        overlay.style.display = 'block';
-        overlay.innerHTML = `
-          <h2 style="color: white">Application Error</h2>
-          <p>The app could not start. This usually happens if a file is missing or there is a path error on GitHub Pages.</p>
-          <hr/>
-          <pre>${msg}\nat ${url}:${lineNo}:${columnNo}</pre>
-        `;
+        if (overlay) {
+          overlay.style.display = 'block';
+          overlay.innerHTML = `
+            <h2 style="color: white; margin-bottom: 20px;">Critical Error Encountered</h2>
+            <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border: 1px solid #333;">
+              <p><strong>Message:</strong> ${msg}</p>
+              <p><strong>File:</strong> ${url}</p>
+              <p><strong>Line:</strong> ${line}:${col}</p>
+              ${error && error.stack ? `<pre style="margin-top: 20px; color: #888; font-size: 12px;">${error.stack}</pre>` : ''}
+            </div>
+            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10B981; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Application</button>
+          `;
+        }
         return false;
       };
     </script>
   </head>
   <body>
     <div id="root">
-      <!-- Loading State -->
-      <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-color);">
-        <div style="text-align: center;">
-          <div style="width: 40px; height: 40px; border: 3px solid #10B981; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-          <p style="margin-top: 15px; color: #64748b; font-size: 14px;">Initializing Intelligence Platform...</p>
-        </div>
+      <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-color);">
+        <div style="width: 40px; height: 40px; border: 3px solid #10B981; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="margin-top: 20px; color: #64748b; font-size: 14px; font-weight: 500;">Establishing Secure Connection...</p>
       </div>
-      <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
     </div>
 
     <div id="error-overlay"></div>
 
-    <!-- 
-      The 'run' script from esm.sh is the magic piece. 
-      It reads your importmap and transpiles .tsx files automatically in the browser.
-    -->
+    <!-- esm.sh/run handles the TSX transpilation automatically -->
     <script type="module" src="https://esm.sh/run"></script>
-    
-    <!-- Actual application entry point -->
-    <script type="module">
-      import "./index.tsx";
-    </script>
+
+    <!-- App Entry Point -->
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

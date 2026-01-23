@@ -1,15 +1,15 @@
 
 import React from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import SentimentTracker from './components/SentimentTracker';
-import NewsGrid from './components/NewsGrid';
-import MapSection from './components/MapSection';
-import Footer from './components/Footer';
+import Navbar from './components/Navbar.tsx';
+import Hero from './components/Hero.tsx';
+import SentimentTracker from './components/SentimentTracker.tsx';
+import NewsGrid from './components/NewsGrid.tsx';
+import MapSection from './components/MapSection.tsx';
+import Footer from './components/Footer.tsx';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#FBFBFA] dark:bg-[#020617] transition-colors duration-300">
       <Navbar />
       <main className="flex-grow">
         <Hero />
