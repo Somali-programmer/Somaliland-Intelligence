@@ -10,6 +10,18 @@ import Footer from './components/Footer.tsx';
 const App: React.FC = () => {
   useEffect(() => {
     console.log(">> APP_MODULE: Component Tree Active");
+    
+    // Explicitly hide the loading screen when the app mounts
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+      loader.classList.add('hidden');
+      // Completely remove from DOM after transition for accessibility
+      setTimeout(() => {
+        if (loader.parentNode) {
+          loader.parentNode.removeChild(loader);
+        }
+      }, 500);
+    }
   }, []);
 
   return (

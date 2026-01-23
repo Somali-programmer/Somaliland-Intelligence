@@ -16,7 +16,6 @@ if (!rootElement) {
 try {
   const root = ReactDOM.createRoot(rootElement);
   
-  // Attempt to render the app
   root.render(
     <React.StrictMode>
       <App />
@@ -26,8 +25,6 @@ try {
   console.log(">> SYSTEM ONLINE: UI Root Mounted Successfully");
 } catch (err) {
   console.error(">> CRITICAL FAILURE: React Mount Failed", err);
-  
-  // Fallback: If React completely fails, show the error in the UI
   const errorOverlay = document.getElementById('error-overlay');
   if (errorOverlay) {
     errorOverlay.style.display = 'block';
