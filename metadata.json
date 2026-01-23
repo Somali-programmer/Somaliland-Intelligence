@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Somaliland Intelligence",
+  "description": "A high-performance geopolitical analysis platform providing real-time insights, regional sentiment tracking, and AI-powered intelligence summaries for the Horn of Africa.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
