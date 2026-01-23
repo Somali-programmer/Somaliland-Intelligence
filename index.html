@@ -49,7 +49,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.95);
+        background: rgba(0,0,0,0.98);
         color: #ff4444;
         padding: 40px;
         z-index: 9999;
@@ -70,15 +70,15 @@
     </style>
 
     <!-- 
-      IMPORT MAP: This is the critical part for GitHub Pages. 
-      Every local file must be mapped so that esm.sh can find and transpile it.
+      IMPORT MAP: 
+      Ensuring all dependencies are resolved to exact URLS and local files are mapped.
     -->
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react": "https://esm.sh/react@19.0.0?dev",
+    "react-dom": "https://esm.sh/react-dom@19.0.0?dev",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?dev",
     "@google/genai": "https://esm.sh/@google/genai@1.38.0",
     "lucide-react": "https://esm.sh/lucide-react@0.475.0",
     "./App.tsx": "./App.tsx",
@@ -97,22 +97,24 @@
 </script>
 
     <script>
-      // Enhanced error reporting to catch issues during the ESM load phase
+      // Capture and display any startup errors
       window.onerror = function(msg, url, line, col, error) {
-        console.error("Global Error:", msg, error);
+        console.error("Platform Error:", msg, error);
         const overlay = document.getElementById('error-overlay');
         if (overlay) {
           overlay.style.display = 'block';
           overlay.innerHTML = `
-            <h2 style="color: white; margin-bottom: 20px;">System Initialization Error</h2>
-            <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border: 1px solid #333;">
-              <p><strong>Message:</strong> ${msg}</p>
-              <p><strong>Source:</strong> ${url || 'Unknown'}</p>
-              <p><strong>Position:</strong> ${line}:${col}</p>
-              ${error && error.stack ? `<pre style="margin-top: 20px; color: #888; font-size: 12px; white-space: pre-wrap;">${error.stack}</pre>` : ''}
+            <h2 style="color: #10B981; margin-bottom: 20px; font-size: 24px;">Intelligence Link Failed</h2>
+            <div style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; line-height: 1.6;">
+              <p style="color: #ef4444; font-weight: bold; margin-bottom: 10px;">${msg}</p>
+              <p style="color: #888; font-size: 13px;"><strong>Module:</strong> ${url || 'In-line script'}</p>
+              <p style="color: #888; font-size: 13px;"><strong>Line:</strong> ${line}:${col}</p>
+              ${error && error.stack ? `<pre style="margin-top: 20px; color: #555; font-size: 11px; white-space: pre-wrap; background: #000; padding: 15px; border-radius: 6px;">${error.stack}</pre>` : ''}
             </div>
-            <p style="margin-top: 20px; color: #64748b; font-size: 12px;">Check the browser console (F12) for detailed network and module resolution errors.</p>
-            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10B981; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Retry Initialization</button>
+            <div style="margin-top: 30px; display: flex; gap: 15px;">
+              <button onclick="location.reload()" style="padding: 12px 24px; background: #10B981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px;">Reconnect Protocol</button>
+              <button onclick="console.log('Open console with F12')" style="padding: 12px 24px; background: transparent; color: #888; border: 1px solid #333; border-radius: 8px; cursor: pointer; font-size: 14px;">Debug Details</button>
+            </div>
           `;
         }
         return false;
@@ -123,27 +125,43 @@
     <div id="root">
       <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-color);">
         <div style="width: 44px; height: 44px; border: 3px solid #10B981; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
-        <p style="margin-top: 24px; color: #64748b; font-size: 14px; font-weight: 500; letter-spacing: 0.025em;">Securing Intelligence Protocols...</p>
-        <p id="timeout-msg" style="display: none; margin-top: 12px; color: #94a3b8; font-size: 12px;">This is taking longer than usual. Check your internet or browser compatibility.</p>
+        <p style="margin-top: 24px; color: #10B981; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">Securing Intelligence Protocols</p>
+        <div id="status-checks" style="margin-top: 30px; display: flex; flex-direction: column; gap: 8px; opacity: 0.6;">
+           <div id="step-1" style="display: flex; items-center; gap: 10px; font-size: 11px; color: #64748b;"><span style="color: #10B981;">✓</span> Resolving Dependencies</div>
+           <div id="step-2" style="display: flex; items-center; gap: 10px; font-size: 11px; color: #64748b;"><span id="step-2-indicator">◌</span> Transpiling Logic</div>
+           <div id="step-3" style="display: flex; items-center; gap: 10px; font-size: 11px; color: #64748b;"><span id="step-3-indicator">◌</span> Initializing UI</div>
+        </div>
       </div>
     </div>
 
     <div id="error-overlay"></div>
 
-    <!-- esm.sh/run acts as the browser-side transpiler for TSX -->
+    <!-- 
+      The 'run' script from esm.sh transpiles TSX in the browser. 
+      We explicitly type our index as 'text/tsx' to ensure it processes correctly.
+    -->
     <script type="module" src="https://esm.sh/run"></script>
-
-    <!-- Actual entry point - using the same script type as esm.sh/run expects -->
-    <script type="module" src="./index.tsx"></script>
+    <script type="text/tsx" src="./index.tsx"></script>
 
     <script>
-      // Show a helper message if it hangs for too long
+      // Update loading state indicators visually
       setTimeout(() => {
-        const timeoutMsg = document.getElementById('timeout-msg');
-        if (timeoutMsg && document.getElementById('root')?.innerText.includes('Securing Intelligence')) {
-          timeoutMsg.style.display = 'block';
+        document.getElementById('step-2-indicator').innerText = '✓';
+        document.getElementById('step-2-indicator').style.color = '#10B981';
+      }, 1500);
+
+      // Final fallback to show error if nothing happens after 10s
+      setTimeout(() => {
+        if (document.getElementById('root')?.innerText.includes('Securing Intelligence')) {
+          const overlay = document.getElementById('error-overlay');
+          overlay.style.display = 'block';
+          overlay.innerHTML = `
+            <h2 style="color: #10B981; margin-bottom: 20px;">Connection Timeout</h2>
+            <p style="color: #888; line-height: 1.6;">The platform failed to initialize within the expected timeframe. This is often due to a slow network connection or a browser that does not support the latest ECMAScript features.</p>
+            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #10B981; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Protocol</button>
+          `;
         }
-      }, 8000);
+      }, 10000);
     </script>
   </body>
 </html>
