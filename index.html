@@ -56,23 +56,22 @@
       @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
       .animate-pulse-custom { animation: pulse-custom 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
       
-      /* New fixed loader styles */
       #loading-screen {
-        position: fixed;
-        inset: 0;
-        z-index: 10000;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: #020617;
-        color: white;
-        transition: opacity 0.5s ease-out, visibility 0.5s;
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 99999 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #020617 !important;
+        color: white !important;
+        transition: opacity 0.5s ease-out, visibility 0.5s !important;
       }
       #loading-screen.hidden {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
       }
     </style>
 
@@ -91,10 +90,8 @@
 </script>
   </head>
   <body>
-    <!-- Root container for React -->
     <div id="root"></div>
 
-    <!-- Loading Screen (Fixed overlay outside root) -->
     <div id="loading-screen">
       <div style="width: 48px; height: 48px; border: 2px solid #10B981; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-bottom: 30px;"></div>
       
@@ -115,18 +112,30 @@
     <script type="text/tsx" src="./index.tsx"></script>
 
     <script>
-      // Diagnostic timeout
       setTimeout(() => {
         const loading = document.getElementById('loading-screen');
         if (loading && !loading.classList.contains('hidden')) {
-          console.warn("UI synchronization slow. Check console for mount logs.");
           const statusUi = document.getElementById('status-ui');
           if (statusUi) {
             statusUi.innerText = '[ !! ] Latency Detected - Syncing...';
             statusUi.style.color = '#fbbf24';
           }
+          // Emergency clear button if it really hangs
+          if (!document.getElementById('emergency-clear')) {
+            const btn = document.createElement('button');
+            btn.id = 'emergency-clear';
+            btn.innerText = 'Bypass Loader';
+            btn.style.marginTop = '20px';
+            btn.style.padding = '8px 16px';
+            btn.style.border = '1px solid #10B981';
+            btn.style.color = '#10B981';
+            btn.style.fontSize = '10px';
+            btn.style.cursor = 'pointer';
+            btn.onclick = () => loading.classList.add('hidden');
+            loading.appendChild(btn);
+          }
         }
-      }, 15000);
+      }, 10000);
     </script>
   </body>
 </html>
